@@ -6,14 +6,16 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    environment:  
-      DEBUG: True
-      DJANGO_DB_NAME: mydb
-      DJANGO_DB_USER:  myuser
-      DJANGO_DB_PASSWORD: mypassword
-      DJANGO_DB_HOST: db
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    env_file:
+      - .env
+    # environment:  
+    #   DEBUG: True
+    #   DJANGO_DB_NAME: mydb
+    #   DJANGO_DB_USER:  myuser
+    #   DJANGO_DB_PASSWORD: mypassword
+    #   DJANGO_DB_HOST: db
+    #   CELERY_BROKER_URL: redis://redis:6379/0
+    #   CELERY_RESULT_BACKEND: redis://redis:6379/0
     depends_on:
       db: 
         condition: service_healthy
@@ -25,10 +27,12 @@ services:
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-     - POSTGRES_DB=mydb
-     - POSTGRES_USER=myuser
-     - POSTGRES_PASSWORD=mypassword
+    env_file:
+      - .env
+    # environment:
+    #  - POSTGRES_DB=mydb
+    #  - POSTGRES_USER=myuser
+    #  - POSTGRES_PASSWORD=mypassword
     ports:
       - "5432:5432"
     healthcheck:
@@ -53,15 +57,17 @@ services:
     command: celery -A config worker --loglevel=info
     volumes:
       - .:/app
-    environment:
-      DEBUG: True
-      DJANGO_DB_NAME: mydb
-      DJANGO_DB_USER: myuser
-      DJANGO_DB_PASSWORD: mypassword
-      DJANGO_DB_HOST: db
-      DB_PORT: 5432
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    env_file:
+      - .env
+    # environment:
+    #   DEBUG: True
+    #   DJANGO_DB_NAME: mydb
+    #   DJANGO_DB_USER: myuser
+    #   DJANGO_DB_PASSWORD: mypassword
+    #   DJANGO_DB_HOST: db
+    #   DB_PORT: 5432
+    #   CELERY_BROKER_URL: redis://redis:6379/0
+    #   CELERY_RESULT_BACKEND: redis://redis:6379/0
 
     depends_on:
        redis:
@@ -74,15 +80,17 @@ services:
     command: celery -A config beat --loglevel=info
     volumes:
       - .:/app
-    environment:
-      DEBUG: True
-      DJANGO_DB_NAME: mydb
-      DJANGO_DB_USER: myuser
-      DJANGO_DB_PASSWORD: mypassword
-      DJANGO_DB_HOST: db
-      DB_PORT: 5432
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    env_file:
+      - .env  
+    # environment:
+    #   DEBUG: True
+    #   DJANGO_DB_NAME: mydb
+    #   DJANGO_DB_USER: myuser
+    #   DJANGO_DB_PASSWORD: mypassword
+    #   DJANGO_DB_HOST: db
+    #   DB_PORT: 5432
+    #   CELERY_BROKER_URL: redis://redis:6379/0
+    #   CELERY_RESULT_BACKEND: redis://redis:6379/0
 
     depends_on:
       redis:

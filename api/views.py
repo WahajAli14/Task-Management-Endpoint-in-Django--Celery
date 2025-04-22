@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth.models import User
+
 # Create your views here
 from rest_framework.decorators import action
 from rest_framework import viewsets, permissions
@@ -10,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 
 from .permissions import IsManager, IsProjectContributor, IsCommentAuthorOrReadOnly
-from .models import Profile, Project, Task, Document, Comment
+from .models import Profile, Project, Task, Document, Comment, CustomUser
 from .utils import get_tokens_for_user
 from .serializer import (
     ProfileSerializer, ProjectSerializer, TaskSerializer,
@@ -41,6 +41,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(manager=self.request.user)
+    
+    
     # def create(self, request, *args, **kwargs):
     #     user = request.user
 
@@ -83,14 +85,14 @@ class TaskViewSet(viewsets.ModelViewSet):
     def assign_task(self, request, pk=None):
         
         task = self.get_object()
-        username = request.data.get("assignee")
+        assignee_id = request.data.get("assignee")
 
-        if not username:
-            return Response({"detail": "Assignee username is required."}, status=400)
+        if not assignee_id:
+            return Response({"detail": "Assignee id is required."}, status=400)
 
         try:
-            assignee = User.objects.get(username=username)
-        except User.DoesNotExist:
+            assignee = CustomUser.objects.get(id=assignee_id)
+        except CustomUser.DoesNotExist:
             return Response({"detail": "User not found."}, status=404)
 
         # ✅ Check if assignee is a team member of the task's projec
@@ -100,7 +102,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         task.assignee = assignee
         task.save()
 
-        return Response({"detail": f"Task assigned to {username} successfully."}, status=200) 
+        return Response({"detail": f"Task assigned to {assignee_id} successfully."}, status=200) 
  
         
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -138,7 +140,7 @@ class RegisterView(APIView):
             tokens = get_tokens_for_user(user)
             return Response({
                  'user': {
-                    'username': user.username,
+                    'username': user.first_name + " " + user.last_name,
                     'email': user.email,
                     'role': user.profile.role,
                     'contact_number': user.profile.contact_number
