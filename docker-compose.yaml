@@ -36,7 +36,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U myuser -d mydb"]
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -59,15 +59,6 @@ services:
       - .:/app
     env_file:
       - .env
-    # environment:
-    #   DEBUG: True
-    #   DJANGO_DB_NAME: mydb
-    #   DJANGO_DB_USER: myuser
-    #   DJANGO_DB_PASSWORD: mypassword
-    #   DJANGO_DB_HOST: db
-    #   DB_PORT: 5432
-    #   CELERY_BROKER_URL: redis://redis:6379/0
-    #   CELERY_RESULT_BACKEND: redis://redis:6379/0
 
     depends_on:
        redis:
@@ -82,15 +73,6 @@ services:
       - .:/app
     env_file:
       - .env  
-    # environment:
-    #   DEBUG: True
-    #   DJANGO_DB_NAME: mydb
-    #   DJANGO_DB_USER: myuser
-    #   DJANGO_DB_PASSWORD: mypassword
-    #   DJANGO_DB_HOST: db
-    #   DB_PORT: 5432
-    #   CELERY_BROKER_URL: redis://redis:6379/0
-    #   CELERY_RESULT_BACKEND: redis://redis:6379/0
 
     depends_on:
       redis:

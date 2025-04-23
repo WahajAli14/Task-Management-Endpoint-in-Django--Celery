@@ -6,3 +6,9 @@ django-celery-beat==2.5.0
 redis==5.0.1
 Pillow==10.1.0
 psycopg2-binary==2.9.9
+pre-commit==3.7.0
+flake8==6.1.0
+flake8-django==1.4
+isort==5.13.2
+black==24.3.0
+
